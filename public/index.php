@@ -40,11 +40,14 @@ function define_user_endpoints(Router $router){
     $router->add('GET', '/', HomeController::index(...));
     $router->add('ANY', '/catalog', CatalogController::index(...));
     $router->add('GET', '/myspace', MySpaceController::index(...));
+    
+    // Added to catch the form submission
+    $router->add('POST', '/myspace/update', MySpaceController::updateProfile(...));
+    
     $router->add('GET', '/navbar', NavbarController::index(...));
     $router->add('ANY','/login', LoginController::index(...));
     $router->add('ANY','/logout', LogoutController::index(...));
     $router->add('ANY','/signup', SignUpController::index(...));
 }
-
 
 $router->dispatch($uri, $method);

@@ -10,19 +10,22 @@ class DBConnection {
 
 
 
-    private function __construct(){ 
-        self::$_host = $_ENV['HOST'];
-        self::$_dbname = $_ENV['DB_NAME'];
-        self::$_user = $_ENV['USER'];
-        self::$_pwd = $_ENV['PWD'];
+private function __construct() { 
+    $host = $_ENV['DB_HOST'] ?? 'localhost';
+    $db   = $_ENV['DB_NAME'] ?? 'website_db';
+    $port = $_ENV['DB_PORT'] ?? '3307';
+    $user = $_ENV['DB_USER'] ?? 'root';
+    $pass = $_ENV['DB_PASS'] ?? '';
 
-        self::$connection = new PDO(
-            "mysql:host=" . self::$_host . ";dbname=" . self::$_dbname . ";charset=utf8",
-            self::$_user,
-            self::$_pwd
-        );
-        self::$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    }
+    // Initialize the main static connection using your environment variables
+    self::$connection = new PDO(
+        "mysql:host=$host;dbname=$db;port=$port;charset=utf8", 
+        $user, 
+        $pass
+    );
+    
+    self::$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+}
 
     public static function getInstance(): PDO
     {
