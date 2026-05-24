@@ -1,4 +1,4 @@
 .env
 /vendor/ 
-utils.py
-DBConnection.php
+ProductExtractor/repository/utils.py
+src/Helpers/DBConnection.php
