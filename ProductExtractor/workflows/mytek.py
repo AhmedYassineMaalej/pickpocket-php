@@ -52,7 +52,12 @@ URLS = {
     "GPU": "https://www.mytek.tn/informatique/composants-informatique/carte-graphique.html",
 }
 
+get_categories = []
+for category, url in URLS.items():
+    category = Category(category)
+    get_categories.append(GetCategory(url, ScrapeCategory(category, scrape_offers)))
+
 scrape_provider = ScrapeProvider(
     provider,
-    GetCategory(URLS["Memory"], ScrapeCategory(Category("Memory"), scrape_offers)),
+    *get_categories
 )

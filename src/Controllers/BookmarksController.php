@@ -1,12 +1,20 @@
 <?php
+
 namespace App\Controllers;
-use App\Entities\Product;
+
 use App\Helpers\JWT;
 use App\Repositories\BookmarkRepository;
 use App\Repositories\ProductRepository;
 
-class BookmarksController {
-    public static function getBookmarksJson() {
+class BookmarksController
+{
+    public static function index(): void
+    {
+        require __DIR__ . '/../../views/pages/bookmarks.php';
+    }
+
+    public static function getBookmarksJson()
+    {
         header('Content-Type: application/json');
 
         if (!JWT::isLoggedIn()) {
@@ -36,8 +44,8 @@ class BookmarksController {
         exit;
     }
 
-    
-    public static function addBookmark() {
+    public static function addBookmark()
+    {
         header('Content-Type: application/json');
 
         if (!JWT::isLoggedIn()) {
@@ -53,42 +61,28 @@ class BookmarksController {
 
         error_log(print_r($result, true));
 
-
         if ($result) {
             echo json_encode(['success' => true]);
         } else {
             echo json_encode(['success' => false, 'error' => 'Failed to add to bookmarks']);
         }
+
         exit;
     }
 
-
-    public static function removeBookmark() {
+    public static function removeBookmark(): void
+    {
         header('Content-Type: application/json');
 
         if (!JWT::isLoggedIn()) {
-            echo json_encode(['success' => false, 'error' => 'Not logged in']);
             exit;
         }
 
-        // Read JSON input
-        $input = json_decode(file_get_contents('php://input'), true);
-        $cartItemId = $input['bookmarks_item_id'] ?? $_POST['bookmarks_item_id'] ?? null;
+        $userId = JWT::getUserId();
+        $productReference = $_POST["productReference"];
+        $product = ProductRepository::getProductByReference($productReference);
+        BookmarkRepository::removeUserBookmark($userId, $product->id);
 
-        error_log("BookmarksItemId to remove: " . $cartItemId);
-
-        if (!$cartItemId) {
-            echo json_encode(['success' => false, 'error' => 'Invalid item']);
-            exit;
-        }
-
-        $result = BookmarkRepository::delete((int)$cartItemId);
-
-        if ($result) {
-            echo json_encode(['success' => true]);
-        } else {
-            echo json_encode(['success' => false, 'error' => 'Failed to remove item']);
-        }
         exit;
     }
 }

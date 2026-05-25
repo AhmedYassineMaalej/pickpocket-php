@@ -168,17 +168,20 @@ class GetCategory(BrowserInstruction[list[OfferBuilder]]):
 
 
 class ScrapeProvider(Scrape[Offer]):
-    def __init__(self, provider: Provider, get_category: GetCategory) -> None:
+    def __init__(self, provider: Provider, *get_categories: GetCategory) -> None:
         self.provider = provider
-        self.get_category = get_category
+        self.get_categories = get_categories
 
     def accept(self, browser: Browser) -> list[Offer]:
-        offers = browser.execute(self.get_category)
+        offers = []
+        for get_category in self.get_categories:
+            category_offers = browser.execute(get_category)
 
-        for offer in offers:
-            offer.set_provider(self.provider)
+            for offer in category_offers:
+                offer.set_provider(self.provider)
+                offers.append(offer.build())
 
-        return [offer.build() for offer in offers]
+        return offers
 
 
 class GetOffers(BrowserInstruction):
