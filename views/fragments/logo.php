@@ -1,5 +1,5 @@
 <?php function logo() { ?>
-    <a class="navbar-brand" href="#">
+    <a class="navbar-brand" href="/">
       <img
         src="https://staging.svgrepo.com/show/15477/coin.svg"
         alt="Logo"
