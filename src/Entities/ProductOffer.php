@@ -2,8 +2,9 @@
 
 namespace App\Entities;
 use App\Repositories\ProductRepository;
+use App\Repositories\ProductOfferRepository;
 use App\Repositories\ProviderRepository;
-
+use PDO;
 class ProductOffer {
     public int $id;
     public Product $product;
@@ -28,4 +29,20 @@ class ProductOffer {
             $this->provider = ProviderRepository :: getByID ($provider);
         }
     }
+    public function convertToProductOffer($data){
+        $productOffer = new ProductOffer($data->id,  $data->product, $data->link, $data->price, $data->provider);
+
+        return $productOffer;
+
+    }
+
+    public function getProductOffersByProductId(int $productId): array {
+            $conn = self::getConnection();
+            $stmt = $conn->prepare("SELECT * FROM ProductOffer WHERE ProductID = ?");
+            $stmt->execute([$productId]);
+            $results = $stmt->fetchAll(PDO::FETCH_OBJ);
+            return array_map(self::convertToProductOffer(...), $results);
+        }
+
+
 }

@@ -3,26 +3,14 @@ use App\Repositories\ProductRepository;
 require __DIR__ . "/../fragments/head.php"; ?>
 <?php require __DIR__ . "/../fragments/navbar.php"; ?>
 <?php require __DIR__ . "/../fragments/deal_of_the_day.php"; ?>
-<?php require __DIR__ . "/../fragments/product_section.php"; ?>
-
+<?php require_once __DIR__ . "/../fragments/product_section.php"; ?>
+<?php require __DIR__ . "/../fragments/stickers.php"; ?>
 <!doctype html>
 <html lang="en">
     <?php head("Pickpocket | Home", 'home.css') ?>
+    <link rel="stylesheet" href="css/catalog.css">
     <body>
-        <div class="stickers-container">
-            <div class="sticker">🪙</div>
-            <div class="sticker">💰</div>
-            <div class="sticker">💵</div>
-            <div class="sticker">🪙</div>
-            <div class="sticker">💸</div>
-            <div class="sticker">🪙</div>
-            <div class="sticker">💰</div>
-            <div class="sticker">💵</div>
-            <div class="sticker">🪙</div>
-            <div class="sticker">💸</div>
-            <div class="sticker">🪙</div>
-            <div class="sticker">💰</div>
-        </div>
+        <?php stickers(); ?>
         <?php navbar(); ?>
         <?php echo "hello world"; ?>
 
@@ -39,6 +27,10 @@ require __DIR__ . "/../fragments/head.php"; ?>
         product_section('⏰ Expiring Deals', ProductRepository::getTopOffers(8), "py-5");
         product_section('🆕 Newest Deals', ProductRepository::getNewestProducts(8), "py-5");
         ?>
-
+        <?php require __DIR__ . "/../fragments/productModal.php"; ?>
     </body>
+<script src="/js/catalog.js">
+    <script src="/js/bookmark_button.js">
+
+
 </html>

@@ -1,7 +1,8 @@
 <?php function search_bar() {?>
-      <form class="d-flex me-auto" role="search">
+      <form class="d-flex me-auto" role="search" action="/catalog">
         <input
           class="form-control me-2"
+          name="filters[search]"
           type="search"
           placeholder="Search"
           aria-label="Search"

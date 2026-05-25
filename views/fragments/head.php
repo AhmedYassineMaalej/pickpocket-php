@@ -8,5 +8,8 @@
         <script src="js/bookmark_button.js" defer></script>
         <link href="css/common.css" rel="stylesheet">
         <link href="/css/<?= $csspath?>" rel="stylesheet">
+        <link rel="stylesheet" href="/css/sidebar.css"
+        <link rel="stylesheet" href="/css/catalog.css"
+
     </head>
 <?php } ?>

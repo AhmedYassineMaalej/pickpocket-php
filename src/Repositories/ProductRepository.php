@@ -13,7 +13,7 @@ class ProductRepository extends Repository {
     protected static string $tableName = "Product";
 
 
-    private static function convertToProduct(object $data): Product {
+    public static function convertToProduct(object $data): Product {
         return new Product(
             $data->ID,
             $data->Name,

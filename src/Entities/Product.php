@@ -26,4 +26,13 @@ class Product {
 
         
     }
+    public static function convertToProduct($data) {
+        $product= new Product(
+            $data["id"],
+            $data["name"],
+            $data["reference"],
+            $data["image"],
+            $data["category_id"] );
+    return $product;
+    }
 }

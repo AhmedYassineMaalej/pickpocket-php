@@ -5,7 +5,7 @@ use App\Helpers\JWT;
 use App\Repositories\BookmarkRepository;
 use App\Repositories\ProductRepository;
 
-function product_card(Product $product)
+function product_card($product)
 {
     $minPrice = ProductRepository::getMinPriceForProduct($product->id);
 
@@ -24,10 +24,13 @@ function product_card(Product $product)
         <h5 class="product-title fw-bold"><?php echo htmlspecialchars($product->name); ?></h5>
         <p class="product-reference text-muted">Ref: <?php echo htmlspecialchars($product->reference); ?></p>
         <p class="product-price text-success fs-5 fw-bold">Starting at <?php echo number_format($minPrice, 2); ?> TND</p>
-        <a href="/product?ref=<?php echo urlencode($product->reference); ?>" class="product-details-btn">
-            View Details
-        </a>
-        <button class="product-bookmark-btn <?= $bookmark_css_class; ?>" data-reference="<?php echo htmlspecialchars($product->reference); ?>"></button>
+
+            <button class ="btn btn-primary flex-grow-1" onclick="event.stopPropagation();showProductModal(<?= $product->id?>)">view details</button>
+        <button class="product-bookmark-btn <?= $bookmark_css_class; ?>"
+                onclick="event.stopPropagation(); toggleBookmark('<?= htmlspecialchars($product->reference) ?>', this)">
+            <img src="/<?= $isBookmarked ? 'bookmark-full.svg' : 'bookmark-empty.svg' ?>">
+        </button>
     </div>
+    <script src="/js/catalog.js"></script>
 <?php } ?>
 

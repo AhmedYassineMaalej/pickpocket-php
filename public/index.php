@@ -7,6 +7,8 @@ use App\Controllers\BookmarksController;
 use App\Controllers\CatalogController;
 use App\Controllers\HomeController;
 use App\Controllers\MySpaceController;
+use App\Controllers\ProductDetailsController;
+use App\Controllers\testController;
 use App\Helpers\Env;
 use App\Router;
 
@@ -29,6 +31,7 @@ define_apis($router);
 function define_apis(Router $router)
 {
     $router->add('GET', '/catalog/getProductAjax', CatalogController::getProductAjax(...));
+    $router->add('GET','/catalog/getFilteredProductsAJAX',CatalogController::getFilteredProductsAJAX(...));
     $router->add('GET', '/bookmarks/items', BookmarksController::getBookmarksJson(...));
     $router->add('POST', '/bookmarks/add', BookmarksController::addBookmark(...));
     $router->add('POST', '/bookmarks/remove', BookmarksController::removeBookmark(...));
@@ -53,7 +56,8 @@ function define_user_endpoints(Router $router)
     $router->add('ANY', '/login', LoginController::index(...));
     $router->add('ANY', '/logout', LogoutController::index(...));
     $router->add('ANY', '/signup', SignUpController::index(...));
->>>>>>> AYM
+    $router->add('ANY', '/productDetails', ProductDetailsController::index(...));
+    $router->add('ANY', '/test', testController::index(...));
 }
 
 $router->dispatch($uri, $method);

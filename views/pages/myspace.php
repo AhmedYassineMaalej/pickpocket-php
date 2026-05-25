@@ -1,17 +1,12 @@
 <?php require __DIR__ . "/../fragments/head.php"; ?>
 <?php require __DIR__ . "/../fragments/navbar.php"; ?>
-
+<?php require __DIR__ . "/../fragments/stickers.php"; ?>
 <!doctype html>
 <html lang="en">
     <?php head("My Space", "myspace.css", "/css/cart.css") ?>
 <body class="bg-dark text-white">
 
-<div class="stickers-container">
-    <div class="sticker">🪙</div>
-    <div class="sticker">💰</div>
-    <div class="sticker">💵</div>
-    <div class="sticker">💸</div>
-</div>
+<?php stickers() ?>
 
 <?php navbar() ?>
 

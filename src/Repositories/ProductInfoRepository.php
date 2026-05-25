@@ -7,7 +7,7 @@ use App\Entities\ProductInfo;
 class ProductInfoRepository extends Repository {
     protected static string $tableName = "ProductInfo";
 
-    public static function getByID(int $productID): array {
+    public static function getByProductID(int $productID): array {
         $result = self::select(["ProductID" => $productID]);
         return array_map(function ($row) {
             return new ProductInfo(
