@@ -18,8 +18,10 @@ class MySpaceController
         }
 
         $payload = JWT::decode_jwt($_COOKIE['JWT'], $_ENV['JWT_SECRET']);
-        $username = $payload['user'];
         $userId = $payload['user_id'];
+
+        $userObj = UserRepository::getUserById($userId);
+        $username = $userObj ? $userObj->getUsername() : $payload['user'];
 
         $currentTab = $_GET['tab'] ?? 'dashboard';
         $recommendedProducts = [];
@@ -30,7 +32,6 @@ class MySpaceController
         } elseif ($currentTab === 'bookmarks') {
             $bookmarks = BookmarkRepository::getUserBookmarks($userId);
         }
-
 
         require __DIR__ . '/../../views/pages/myspace.php';
     }
@@ -87,4 +88,3 @@ class MySpaceController
         exit;
     }
 }
-

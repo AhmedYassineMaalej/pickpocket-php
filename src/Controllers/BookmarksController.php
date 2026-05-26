@@ -55,7 +55,12 @@ class BookmarksController
 
         $userId = JWT::getUserId();
 
-        $productReference = $_POST['productReference'];
+        $productReference = $_POST['productReference'] ?? null;
+        if (!$productReference) {
+            echo json_encode(['success' => false, 'error' => 'Missing product reference']);
+            exit;
+        }
+
         $productID = ProductRepository::getProductByReference($productReference)->id;
         $result = BookmarkRepository::addUserBookmark($userId, $productID);
 
@@ -75,14 +80,58 @@ class BookmarksController
         header('Content-Type: application/json');
 
         if (!JWT::isLoggedIn()) {
+            echo json_encode(['success' => false, 'error' => 'Not logged in']);
             exit;
         }
 
         $userId = JWT::getUserId();
-        $productReference = $_POST["productReference"];
-        $product = ProductRepository::getProductByReference($productReference);
-        BookmarkRepository::removeUserBookmark($userId, $product->id);
+        $productReference = null;
 
+        if (isset($_POST['productReference']) || isset($_POST['bookmarks_item_id'])) {
+            $productReference = $_POST['productReference'] ?? $_POST['bookmarks_item_id'];
+        }
+
+        if (!$productReference) {
+            $rawInput = file_get_contents('php://input');
+            $jsonData = json_decode($rawInput, true);
+            if ($jsonData) {
+                $productReference = $jsonData['productReference'] ?? $jsonData['bookmarks_item_id'] ?? null;
+            }
+        }
+
+        if (!$productReference || $productReference === 'undefined') {
+            echo json_encode(['success' => false, 'error' => 'Missing product identifier reference.']);
+            exit;
+        }
+
+        $productId = null;
+
+        if (is_numeric($productReference)) {
+            $bookmarkId = (int)$productReference;
+            
+            $db = BookmarkRepository::getConnection();
+            $stmt = $db->prepare("SELECT ProductID FROM Bookmark WHERE ID = :bookmarkId AND UserID = :userId");
+            $stmt->execute([':bookmarkId' => $bookmarkId, ':userId' => $userId]);
+            $row = $stmt->fetch(\PDO::FETCH_OBJ);
+            
+            if ($row) {
+                $productId = (int)$row->ProductID;
+            }
+        } else {
+            $product = ProductRepository::getProductByReference($productReference);
+            if ($product) {
+                $productId = (int)$product->id;
+            }
+        }
+
+        if (!$productId) {
+            echo json_encode(['success' => false, 'error' => 'Target product record could not be matched.']);
+            exit;
+        }
+
+        BookmarkRepository::removeUserBookmark((int)$userId, $productId);
+
+        echo json_encode(['success' => true]);
         exit;
     }
 }

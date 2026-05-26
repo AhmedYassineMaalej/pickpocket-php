@@ -15,7 +15,8 @@ function navbar() {
     require __DIR__ . "/myspace_button.php";
 
     $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-    $isMySpace = ($currentPath === '/myspace');
+    
+    $isMySpace = (strpos($currentPath, '/myspace') === 0 || strpos($currentPath, '/bookmarks') === 0);
     ?>
 
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
@@ -41,7 +42,10 @@ function navbar() {
             <ul class="navbar-nav mb-2 mb-lg-0">
                 <?php
                 if (JWT::isLoggedIn()) {
-                    bookmarks_button();
+                    if (!$isMySpace) {
+                        bookmarks_button();
+                    }
+                    
                     $categories = CategoryRepository::findAll();
                     catalog_button($categories);
                     myspace_button();
