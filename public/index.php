@@ -31,7 +31,7 @@ define_apis($router);
 function define_apis(Router $router)
 {
     $router->add('GET', '/catalog/getProductAjax', CatalogController::getProductAjax(...));
-    $router->add('GET','/catalog/getFilteredProductsAJAX',CatalogController::getFilteredProductsAJAX(...));
+    $router->add('GET', '/catalog/getFilteredProductsAJAX', CatalogController::getFilteredProductsAJAX(...));
     $router->add('GET', '/bookmarks/items', BookmarksController::getBookmarksJson(...));
     $router->add('POST', '/bookmarks/add', BookmarksController::addBookmark(...));
     $router->add('POST', '/bookmarks/remove', BookmarksController::removeBookmark(...));
@@ -42,22 +42,18 @@ function define_user_endpoints(Router $router)
     $router->add('GET', '/', HomeController::index(...));
     $router->add('ANY', '/catalog', CatalogController::index(...));
     $router->add('GET', '/myspace', MySpaceController::index(...));
-<<<<<<< HEAD
-    
+
     // Added to catch the form submission
     $router->add('POST', '/myspace/update', MySpaceController::updateProfile(...));
-    
-    $router->add('GET', '/navbar', NavbarController::index(...));
-    $router->add('ANY','/login', LoginController::index(...));
-    $router->add('ANY','/logout', LogoutController::index(...));
-    $router->add('ANY','/signup', SignUpController::index(...));
-=======
+    $router->add('ANY', '/login', LoginController::index(...));
+    $router->add('ANY', '/logout', LogoutController::index(...));
+    $router->add('ANY', '/signup', SignUpController::index(...));
     $router->add('GET', '/bookmarks', BookmarksController::index(...));
     $router->add('ANY', '/login', LoginController::index(...));
     $router->add('ANY', '/logout', LogoutController::index(...));
     $router->add('ANY', '/signup', SignUpController::index(...));
-    $router->add('ANY', '/productDetails', ProductDetailsController::index(...));
-    $router->add('ANY', '/test', testController::index(...));
+    /* $router->add('ANY', '/productDetails', ProductDetailsController::index(...)); */
+    /* $router->add('ANY', '/test', testController::index(...)); */
 }
 
 $router->dispatch($uri, $method);

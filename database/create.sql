@@ -83,6 +83,7 @@ CREATE TABLE if not exists Bookmark (
     FOREIGN KEY (ProductID) REFERENCES Product(ID) ON DELETE CASCADE,
     UNIQUE KEY unique_user_bookmark (UserID, ProductID)
 );
+
 CREATE TABLE IF NOT EXISTS recommendation (
     id INT PRIMARY KEY AUTO_INCREMENT,
     category_id INT,

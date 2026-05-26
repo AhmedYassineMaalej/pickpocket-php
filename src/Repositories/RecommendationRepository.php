@@ -6,10 +6,12 @@ use App\Entities\Product;
 use Exception;
 use PDO;
 
-class RecommendationRepository extends Repository {
+class RecommendationRepository extends Repository
+{
     protected static string $tableName = "recommendation";
 
-    public static function updateWeightsOnBookmark(int $userId, int $newProductOfferId, bool $increment = true): void {
+    public static function updateWeightsOnBookmark(int $userId, int $newProductOfferId, bool $increment = true): void
+    {
         try {
             // product_id from product_offer
             $stmt = self::getConnection()->prepare("
@@ -17,11 +19,13 @@ class RecommendationRepository extends Repository {
             ");
             $stmt->execute([$newProductOfferId]);
             $offer = $stmt->fetch(\PDO::FETCH_OBJ);
-            
-            if (!$offer) return;
-            
+
+            if (!$offer) {
+                return;
+            }
+
             $newProductId = $offer->ProductID;
-            
+
             // Get all existing products in user's cart (excluding the new one)
             $stmt = self::getConnection()->prepare("
                 SELECT DISTINCT p.ID as product_id
@@ -31,38 +35,41 @@ class RecommendationRepository extends Repository {
                 JOIN Product p ON po.ProductID = p.ID
                 WHERE c.user_id = ? AND p.ID != ?
             ");
+
             $stmt->execute([$userId, $newProductId]);
             $existingProducts = $stmt->fetchAll(\PDO::FETCH_OBJ);
-            
+
             // Get category of the new product
             $stmt = self::getConnection()->prepare("
                 SELECT CategoryID FROM Product WHERE ID = ?
             ");
             $stmt->execute([$newProductId]);
             $newProduct = $stmt->fetch(\PDO::FETCH_OBJ);
-            
-            if (!$newProduct) return;
-            
+
+            if (!$newProduct) {
+                return;
+            }
+
             $categoryId = $newProduct->CategoryID;
-            
+
             // Determine weight change
             $weightChange = $increment ? 1 : -1;
-            
+
             // Update weights for each existing product in same category
             foreach ($existingProducts as $existing) {
                 $existingProductId = $existing->product_id;
-                
+
                 // Check if same category
                 $stmt = self::getConnection()->prepare("
                     SELECT CategoryID FROM Product WHERE ID = ?
                 ");
                 $stmt->execute([$existingProductId]);
                 $existingProduct = $stmt->fetch(\PDO::FETCH_OBJ);
-                
-                if ($existingProduct->CategoryID != $categoryId) { 
+
+                if ($existingProduct->CategoryID != $categoryId) {
                     continue;
                 }
-                
+
                 if ($increment) {
                     // Adding bookmark - insert or update
                     $stmt = self::getConnection()->prepare("
@@ -81,10 +88,10 @@ class RecommendationRepository extends Repository {
                     ");
                     $stmt->execute([$categoryId, $newProductId, $existingProductId, $newProductId, $existingProductId]);
                     $existingRec = $stmt->fetch(\PDO::FETCH_OBJ);
-                    
+
                     if ($existingRec) {
                         $newWeight = $existingRec->weight + $weightChange;
-                        
+
                         if ($newWeight <= 0) {
                             // Delete the row if weight becomes 0 or negative
                             $stmt = self::getConnection()->prepare("
@@ -115,7 +122,8 @@ class RecommendationRepository extends Repository {
     /**
     given a product id, give an array of "limit" products with the top strongest edges
      */
-    public static function getRecommendationsForProduct(int $productId, int $limit = 6): array {
+    public static function getRecommendationsForProduct(int $productId, int $limit = 6): array
+    {
         try {
             // Get product's category
             $stmt = self::getConnection()->prepare("
@@ -163,10 +171,11 @@ class RecommendationRepository extends Repository {
         }
     }
 
- 
+
     // given a user id, returns an array of products of lencth exactly = limit
-   
-    public static function getRecommendationsForUser(int $userId, int $limit = 6): array {
+
+    public static function getRecommendationsForUser(int $userId, int $limit = 6): array
+    {
         try {
             // Get products from user's cart
             $stmt = self::getConnection()->prepare("
@@ -196,8 +205,8 @@ class RecommendationRepository extends Repository {
             error_log("Placeholders: " . $placeholders);
 
             // Embed limit directly in SQL (cast to int for safety)
-            $limit = (int)$limit;
-            
+            $limit = (int) $limit;
+
             $sql = "
                 SELECT 
                     CASE 
@@ -240,7 +249,7 @@ class RecommendationRepository extends Repository {
 
             error_log("Returning " . count($products) . " products");
             error_log("=== END DEBUG ===");
-            
+
             return $products;
         } catch (Exception $e) {
             error_log("Failed to get user recommendations: " . $e->getMessage());
@@ -254,7 +263,8 @@ class RecommendationRepository extends Repository {
     /**
      given a category id, it fetches an array of "limit" products that are correlated the most
      */
-    public static function getTopRelationshipsInCategory(int $categoryId, int $limit = 6): array {
+    public static function getTopRelationshipsInCategory(int $categoryId, int $limit = 6): array
+    {
         try {
             $stmt = self::getConnection()->prepare("
                 SELECT product_id1, product_id2, weight
@@ -271,3 +281,4 @@ class RecommendationRepository extends Repository {
         }
     }
 }
+

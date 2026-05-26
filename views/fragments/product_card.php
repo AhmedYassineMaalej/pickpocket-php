@@ -1,6 +1,5 @@
 <?php
 
-use App\Entities\Product;
 use App\Helpers\JWT;
 use App\Repositories\BookmarkRepository;
 use App\Repositories\ProductRepository;
@@ -31,6 +30,5 @@ function product_card($product)
             <img src="/<?= $isBookmarked ? 'bookmark-full.svg' : 'bookmark-empty.svg' ?>">
         </button>
     </div>
-    <script src="/js/catalog.js"></script>
 <?php } ?>
 

@@ -1,9 +1,4 @@
 .env
 /vendor/ 
-<<<<<<< HEAD
-ProductExtractor/repository/utils.py
-src/Helpers/DBConnection.php
-=======
 .php-cs-fixer.cache
 .php-cs-fixer.dist.php
->>>>>>> AYM

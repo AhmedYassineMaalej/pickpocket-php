@@ -1,11 +1,14 @@
 bookmarkButtons = document.querySelectorAll(".product-bookmark-btn");
+currentUrl = window.location.href;
 
 bookmarkButtons.forEach((button) => {
   button.addEventListener("click", async (_event) => {
     // check to see if bookmark is already set
     if (button.classList.contains("bookmark-full")) {
       await removeBookmark(button.dataset.reference);
-      button.parentElement.remove();
+      if (currentUrl == "bookmarks") {
+        button.parentElement.remove();
+      }
     } else {
       await addBookmark(button.dataset.reference);
     }

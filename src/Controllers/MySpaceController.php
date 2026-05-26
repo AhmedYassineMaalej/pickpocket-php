@@ -7,19 +7,20 @@ use App\Repositories\RecommendationRepository;
 use App\Repositories\UserRepository;
 use App\Repositories\BookmarkRepository;
 
-class MySpaceController {
-    
-    public static function index(): void {
-        if (!JWT::isLoggedIn()){
+class MySpaceController
+{
+    public static function index(): void
+    {
+        if (!JWT::isLoggedIn()) {
             $_SESSION['error'] = "You're not logged in";
-            header("Location: /");
+            header("Location: /login");
             exit;
         }
-        
+
         $payload = JWT::decode_jwt($_COOKIE['JWT'], $_ENV['JWT_SECRET']);
         $username = $payload['user'];
         $userId = $payload['user_id'];
-        
+
         $currentTab = $_GET['tab'] ?? 'dashboard';
         $recommendedProducts = [];
         $bookmarks = [];
@@ -30,14 +31,16 @@ class MySpaceController {
             $bookmarks = BookmarkRepository::getUserBookmarks($userId);
         }
 
+
         require __DIR__ . '/../../views/pages/myspace.php';
     }
 
     /**
      * Handles POST /myspace/update
      */
-    public static function updateProfile(): void {
-        if (!JWT::isLoggedIn()){
+    public static function updateProfile(): void
+    {
+        if (!JWT::isLoggedIn()) {
             header("Location: /");
             exit;
         }
@@ -75,7 +78,7 @@ class MySpaceController {
 
             UserRepository::updateProfileDetails($userId, $newUsername, $newPassword);
             $_SESSION['success'] = "Profile updated successfully!";
-            
+
         } catch (\Exception $e) {
             $_SESSION['error'] = "Failed to update profile: " . $e->getMessage();
         }
@@ -84,3 +87,4 @@ class MySpaceController {
         exit;
     }
 }
+
