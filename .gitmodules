@@ -1,0 +1,3 @@
+[submodule "offer-extractor"]
+	path = offer-extractor
+	url = https://github.com/AhmedYassineMaalej/pickpocket-extract
