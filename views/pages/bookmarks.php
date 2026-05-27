@@ -17,10 +17,7 @@ require __DIR__ . '/../fragments/product_section.php';
 <?php navbar(); ?>
 <?php
 $userID = JWT::getUserId();
-$bookmarks = BookmarkRepository::getUserBookmarks($userID);
-$products = array_map(function (Bookmark $bookmark) {
-    return $bookmark->product;
-}, $bookmarks);
+$products = BookmarkRepository::getUserBookmarks($userID);
 
 product_section('My Bookmarks', $products);
 

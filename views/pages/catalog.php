@@ -3,7 +3,7 @@ require __DIR__ . "/../fragments/head.php";
 require __DIR__ . "/../fragments/navbar.php";
 
 require __DIR__ . "/../fragments/stickers.php";
-require __DIR__ . "/../fragments/sidebar.php";
+require __DIR__ . "/../fragments/product_section.php";
 ?>
 
 
@@ -29,8 +29,6 @@ require __DIR__ . "/../fragments/sidebar.php";
 
     <div class="catalog-layout">
 
-        <!-- SIDEBAR -->
-        <?php sidebar(); ?>
 
         <!-- PRODUCTS -->
         <main class="catalog-products">
@@ -38,7 +36,6 @@ require __DIR__ . "/../fragments/sidebar.php";
         </main>
 
     </div>
-        <?php require __DIR__ . "/../fragments/productModal.php"; ?>
 
     <script src="/js/sidebar.js"></script>
 

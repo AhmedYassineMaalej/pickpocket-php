@@ -138,7 +138,6 @@ class RecommendationRepository extends Repository {
                     $products[] = $productObj;
                 }
             }
-            error_log(print_r($products, true));
             return $products;
         } catch (Exception $e) {
             error_log("Failed to get recommendations: " . $e->getMessage());
@@ -195,7 +194,6 @@ class RecommendationRepository extends Repository {
                     $products[] = $productObj;
                 }
             }
-            error_log(print_r($products, true));
             return $products;
             
         } catch (Exception $e) {

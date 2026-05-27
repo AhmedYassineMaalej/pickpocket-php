@@ -21,16 +21,11 @@ class MySpaceController
         $username = $payload['user'];
         $userId = $payload['user_id'];
 
-        $currentTab = $_GET['tab'] ?? 'dashboard';
-        $recommendedProducts = [];
-        $bookmarks = [];
-
-        if ($currentTab === 'dashboard') {
-            $recommendedProducts = RecommendationRepository::getRecommendationsForUser($userId, 6);
-        } elseif ($currentTab === 'bookmarks') {
-            $bookmarks = BookmarkRepository::getUserBookmarks($userId);
-        }
-
+        $activeTab = $_GET['tab'] ?? 'dashboard';
+        error_log("Current tab: " . $activeTab);
+        $recommendedProducts = RecommendationRepository::getRecommendationsForUser($userId, 6);
+        $bookmarks = BookmarkRepository::getUserBookmarks($userId);
+  
 
         require __DIR__ . '/../../views/pages/myspace.php';
     }

@@ -2,3 +2,4 @@
 /vendor/ 
 .php-cs-fixer.cache
 .php-cs-fixer.dist.php
+/offer-extractor/node_modules/

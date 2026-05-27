@@ -19,7 +19,6 @@ bookmarkButtons.forEach((button) => {
 
 async function addBookmark(productReference) {
   const data = new FormData();
-
   data.append("productReference", productReference);
 
   return await fetch("/bookmarks/add", {

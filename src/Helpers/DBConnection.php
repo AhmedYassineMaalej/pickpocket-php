@@ -19,7 +19,7 @@ class DBConnection
         self::$_host = $_ENV['HOST'];
         self::$_dbname = $_ENV['DB_NAME'];
         self::$_user = $_ENV['USER'];
-        self::$_pwd = $_ENV['PWD'];
+        self::$_pwd = $_ENV['DB_PASS'];
 
         self::$connection = new PDO(
             "mysql:host=" . self::$_host . ";dbname=" . self::$_dbname . ";charset=utf8",

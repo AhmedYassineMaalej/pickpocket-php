@@ -28,7 +28,6 @@ class BookmarksController
         $response = [
             'items' => [],
         ];
-
         foreach ($bookmarks as $bookmark) {
             $response['items'][] = [
                 'id'       => $bookmark['id'],
@@ -59,7 +58,6 @@ class BookmarksController
         $productID = ProductRepository::getProductByReference($productReference)->id;
         $result = BookmarkRepository::addUserBookmark($userId, $productID);
 
-        error_log(print_r($result, true));
 
         if ($result) {
             echo json_encode(['success' => true]);

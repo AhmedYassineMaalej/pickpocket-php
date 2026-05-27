@@ -24,9 +24,9 @@ function product_card($product)
         <p class="product-reference text-muted">Ref: <?php echo htmlspecialchars($product->reference); ?></p>
         <p class="product-price text-success fs-5 fw-bold">Starting at <?php echo number_format($minPrice, 2); ?> TND</p>
 
-            <button class ="btn btn-primary flex-grow-1" onclick="event.stopPropagation();showProductModal(<?= $product->id?>)">view details</button>
         <button class="product-bookmark-btn <?= $bookmark_css_class; ?>"
-                onclick="event.stopPropagation(); toggleBookmark('<?= htmlspecialchars($product->reference) ?>', this)">
+                data-reference="<?= htmlspecialchars($product->reference) ?>"
+                onclick="event.stopPropagation();">
             <img src="/<?= $isBookmarked ? 'bookmark-full.svg' : 'bookmark-empty.svg' ?>">
         </button>
     </div>
