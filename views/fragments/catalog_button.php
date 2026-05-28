@@ -19,9 +19,9 @@
             <?php foreach ($categories as $category) { ?>
                 <li>
                     <a class="dropdown-item"
-                        href="/catalog?filters[category]=<?= urlencode($category->Name) ?>"
+                        href="/catalog?filters[category]=<?= urlencode($category->name) ?>"
                         onclick="event.stopPropagation(); window.location.href=this.href; return false;">
-                            <?= htmlspecialchars($category->Name) ?>
+                            <?= htmlspecialchars($category->name) ?>
                         </a>
                 </li>
             <?php } ?>

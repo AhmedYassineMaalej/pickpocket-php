@@ -39,7 +39,7 @@ class BookmarkRepository extends Repository
 
         return array_map(function ($row) {
             return new \App\Entities\Product(
-                $row->productID,
+                $row->product_id,
                 $row->product_name,
                 $row->product_reference,
                 $row->product_image,
@@ -93,4 +93,3 @@ class BookmarkRepository extends Repository
         return count($rows) > 0;
     }
 }
-
