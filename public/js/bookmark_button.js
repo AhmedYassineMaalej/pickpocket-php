@@ -29,10 +29,10 @@ async function addBookmark(productReference) {
 
 async function removeBookmark(productReference) {
   const data = new FormData();
-
   data.append("productReference", productReference);
-  await fetch("/bookmarks/remove", {
+  const response = await fetch("/bookmarks/remove", {
     method: "POST",
     body: data,
   });
+  return response.ok;
 }

@@ -2,10 +2,8 @@
 
 namespace App\Controllers;
 
+use App\Repositories\OfferRepository;
 use App\Repositories\ProductRepository;
-use App\Repositories\ProductOfferRepository;
-use App\Entities\ProductInfo;
-use App\Entities\ProductOffer;
 use App\Entities\Product;
 use App\Helpers\JWT;
 
@@ -20,7 +18,7 @@ class CatalogController
         }
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             $filters = $_GET["filters"] ?? [];
-            $product_array = ProductOfferRepository::filterOffers($filters);
+            $product_array = OfferRepository::filterOffers($filters);
 
 
             $products = array_map(
@@ -123,7 +121,7 @@ class CatalogController
         // Remove null/empty so filterOffers conditions are not triggered
         $filters = array_filter($filters, fn($v) => $v !== null && $v !== '');
 
-        $product_array = ProductOfferRepository::filterOffers($filters);
+        $product_array = OfferRepository::filterOffers($filters);
 
 
         $products = array_map(

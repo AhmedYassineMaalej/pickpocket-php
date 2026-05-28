@@ -4,7 +4,7 @@
 
 <!doctype html>
 <html lang="en">
-    <?php head("Sign Up", "signup.css") ?>
+    <?php head('Sign Up', ['signup.css']) ?>
     <body>
 
         <?php stickers(); ?>

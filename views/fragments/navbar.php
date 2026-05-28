@@ -1,10 +1,10 @@
 <?php
 
-use App\Entities\Category;
 use App\Helpers\JWT;
 use App\Repositories\CategoryRepository;
 
-function navbar() {
+function navbar()
+{
     require __DIR__ . "/logo.php";
     require __DIR__ . "/search_bar.php";
     require __DIR__ . "/login_button.php";
@@ -45,7 +45,7 @@ function navbar() {
                     $categories = CategoryRepository::findAll();
                     catalog_button($categories);
                     myspace_button();
-                    
+
                     if (!$isMySpace) {
                         logout_button();
                     }
@@ -53,7 +53,7 @@ function navbar() {
                     login_button();
                     signup_button();
                 }
-                ?>
+    ?>
             </ul>
         </div>
     </nav>

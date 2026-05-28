@@ -5,17 +5,17 @@ namespace App\Repositories;
 use App\Entities\ProductOffer;
 use Exception;
 
-class ProductOfferRepository extends Repository 
+class OfferRepository extends Repository
 {
     protected static string $tableName = "Offer";
 
-    public static function getProductOffers(int $productID): array 
+    public static function getProductOffers(int $productID): array
     {
-        $data = self::select(['Product_id' => $productID]);
-        return array_map(self::convertToProductOffer(...), $data);
+        $data = self::select(['product_id' => $productID]);
+        return array_map([self::class, 'convertToProductOffer'], $data);
     }
 
-    private static function convertToProductOffer(object $data): ProductOffer 
+    private static function convertToProductOffer(object $data): ProductOffer
     {
         if (!$data) {
             throw new Exception("unable to convert data into offer");
@@ -30,47 +30,48 @@ class ProductOfferRepository extends Repository
         );
     }
 
-    public static function getProductOfferById(int $id): ?ProductOffer 
+    public static function getOfferById(int $id): ?ProductOffer
     {
         $data = self::findById($id);
-        if (!$data) return null;
+        if (!$data) {
+            return null;
+        }
         return self::convertToProductOffer($data);
     }
-
-    public static function filterOffers(array $filters = []): array 
+    public static function filterOffers(array $filters = []): array
     {
         $conditions = [];
         $params = [];
         $joins = [
             'category' => 'LEFT',
-            'provider' => 'LEFT'
+            'provider' => 'LEFT',
         ];
 
         // Build conditions
         if (!empty($filters['category'])) {
-            $conditions[] = "c.Name = :category";
+            $conditions[] = "c.name = :category";
             $params[':category'] = $filters['category'];
             $joins['category'] = 'INNER';
         }
 
         if (!empty($filters['provider'])) {
-            $conditions[] = "pr.Name = :provider";
+            $conditions[] = "pr.name = :provider";
             $params[':provider'] = $filters['provider'];
             $joins['provider'] = 'INNER';
         }
 
         if (!empty($filters['min_price'])) {
-            $conditions[] = "po.Price >= :min_price";
+            $conditions[] = "po.price >= :min_price";
             $params[':min_price'] = $filters['min_price'];
         }
 
         if (!empty($filters['max_price'])) {
-            $conditions[] = "po.Price <= :max_price";
+            $conditions[] = "po.price <= :max_price";
             $params[':max_price'] = $filters['max_price'];
         }
 
         if (!empty($filters['search'])) {
-            $conditions[] = "(p.Name LIKE :search OR p.Reference LIKE :search)";
+            $conditions[] = "(p.name LIKE :search OR p.reference LIKE :search)";
             $params[':search'] = "%" . $filters['search'] . "%";
         }
 
@@ -110,19 +111,19 @@ class ProductOfferRepository extends Repository
         // Add ORDER BY
         if (!empty($filters['sort_by']) && in_array($filters['sort_by'], ['price', 'name'])) {
             $direction = (!empty($filters['order']) && strtolower($filters['order']) === 'desc') ? 'DESC' : 'ASC';
-            $sortField = ($filters['sort_by'] === 'price') ? 'po.Price' : 'p.Name';
+            $sortField = ($filters['sort_by'] === 'price') ? 'po.price' : 'p.Name';
             $sql .= " ORDER BY $sortField $direction";
         }
 
         // Add LIMIT/OFFSET
         if (!empty($filters['limit'])) {
             $sql .= " LIMIT :limit";
-            $params[':limit'] = (int)$filters['limit'];
+            $params[':limit'] = (int) $filters['limit'];
         }
-        
+
         if (!empty($filters['offset'])) {
             $sql .= " OFFSET :offset";
-            $params[':offset'] = (int)$filters['offset'];
+            $params[':offset'] = (int) $filters['offset'];
         }
 
         // Execute query
@@ -137,7 +138,7 @@ class ProductOfferRepository extends Repository
         $offers = [];
         foreach ($rows as $row) {
             $id = $row['offer_id'];
-            
+
             if (!isset($offers[$id])) {
                 $offers[$id] = [
                     'offer_id' => $row['offer_id'],
@@ -152,7 +153,7 @@ class ProductOfferRepository extends Repository
                         'category_name' => $row['category_name'],
                         'provider_name' => $row['provider_name'],
                     ],
-                    'info' => []
+                    'info' => [],
                 ];
             }
 

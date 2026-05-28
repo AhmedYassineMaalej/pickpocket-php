@@ -73,14 +73,22 @@ class BookmarksController
         header('Content-Type: application/json');
 
         if (!JWT::isLoggedIn()) {
+            echo json_encode(['success' => false, 'error' => 'Not logged in']);
             exit;
         }
 
         $userId = JWT::getUserId();
-        $productReference = $_POST["productReference"];
+        $productReference = $_POST["productReference"] ?? null;
+        
+        if (!$productReference) {
+            echo json_encode(['success' => false, 'error' => 'Product reference required']);
+            exit;
+        }
+        
         $product = ProductRepository::getProductByReference($productReference);
         BookmarkRepository::removeUserBookmark($userId, $product->id);
-
+        
+        echo json_encode(['success' => true]);
         exit;
     }
 }

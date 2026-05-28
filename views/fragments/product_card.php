@@ -33,6 +33,5 @@ function product_card($product)
             onclick="event.stopPropagation();">
     </button>
 </div>
-<script src="/js/catalog.js"></script>
 <?php } ?>
 

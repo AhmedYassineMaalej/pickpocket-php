@@ -1,8 +1,8 @@
 <?php
 
 namespace App\Repositories;
-use App\Entities\ProductInfo;
 
+use App\Entities\ProductInfo;
 
 class ProductInfoRepository extends Repository {
     protected static string $tableName = "product_info";

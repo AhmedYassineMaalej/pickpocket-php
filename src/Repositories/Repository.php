@@ -62,6 +62,7 @@ abstract class Repository
         $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
+
     /**
      * @param array<int,mixed> $params
      */
@@ -82,4 +83,3 @@ abstract class Repository
         return DBConnection::getInstance();
     }
 }
-

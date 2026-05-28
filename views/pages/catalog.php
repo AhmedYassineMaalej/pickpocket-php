@@ -1,5 +1,5 @@
-<?php 
-require __DIR__ . "/../fragments/head.php"; 
+<?php
+require __DIR__ . "/../fragments/head.php";
 require __DIR__ . "/../fragments/navbar.php";
 
 require __DIR__ . "/../fragments/stickers.php";
@@ -9,7 +9,7 @@ require __DIR__ . "/../fragments/product_section.php";
 
 <!doctype html>
 <html lang="en">
-    <?php head("Pickpocket | Home", 'home.css') ?>
+    <?php head("Home", ['home.css']) ?>
 
 
     <body>
@@ -57,6 +57,6 @@ require __DIR__ . "/../fragments/product_section.php";
     <script src="/js/sidebar.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/js/catalog.js"></script>
-
+    <script src="/js/bookmark_button.js"></script>
     </body>
 </html>
