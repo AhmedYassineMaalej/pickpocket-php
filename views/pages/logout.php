@@ -3,7 +3,7 @@
 <?php require __DIR__ . "/../fragments/stickers.php"; ?>
 <!DOCTYPE html>
 <html lang="en">
-    <?php head("Logout", "logout.css") ?>
+    <?php head("Logout", ["logout.css"]) ?>
 <body>
 
 <?php stickers(); ?>
