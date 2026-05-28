@@ -18,18 +18,18 @@ class BookmarkRepository extends Repository
     {
         $sql = "
         SELECT 
-            b.ID AS bookmark_id,
-            b.UserID,
-            b.productID,
-            p.Name AS product_name,
-            p.Reference AS product_reference, 
-            p.Image AS product_image,
+            b.id AS bookmark_id,
+            b.user_id,
+            b.product_id,
+            p.name AS product_name,
+            p.reference AS product_reference, 
+            p.image AS product_image,
             p.category_id,                     
-            po.Price AS price
-        FROM Bookmark b
-        JOIN Product p ON b.productID = p.ID
+            po.price AS price
+        FROM bookmark b
+        JOIN product p ON b.product_id = p.id
         LEFT JOIN offer po ON po.product_id = p.ID
-        WHERE b.UserID = :userID
+        WHERE b.user_id = :userID
         ";
 
         $stmt = self::getConnection()->prepare($sql);
@@ -43,7 +43,7 @@ class BookmarkRepository extends Repository
                 $row->product_name,
                 $row->product_reference,
                 $row->product_image,
-                (int)$row->category_id
+                (int) $row->category_id,
             );
         }, $rows);
     }
@@ -52,10 +52,10 @@ class BookmarkRepository extends Repository
     {
         try {
             $result = self::insert([
-                'UserID' => $userID,
-                'productID' => $productID,
+                'user_id' => $userID,
+                'product_id' => $productID,
             ]);
-            
+
             if ($result) {
                 RecommendationRepository::updateWeightsOnBookmark($userID, $productID, true);
                 return true;
@@ -71,10 +71,10 @@ class BookmarkRepository extends Repository
     {
         try {
             self::delete([
-                'UserID' => $userID,
-                'productID' => $productID,
+                'user_id' => $userID,
+                'product_id' => $productID,
             ]);
-            
+
             RecommendationRepository::updateWeightsOnBookmark($userID, $productID, false);
             return true;
         } catch (Exception $e) {
@@ -86,10 +86,11 @@ class BookmarkRepository extends Repository
     public static function isProductBookmarked(int $userID, int $productID): bool
     {
         $rows = self::select([
-            'UserID' => $userID,
-            'productID' => $productID,
+            'user_id' => $userID,
+            'product_id' => $productID,
         ]);
 
         return count($rows) > 0;
     }
 }
+

@@ -17,8 +17,8 @@ class CategoryRepository extends Repository
     private static function convertToCategory(object $data): Category
     {
         return new Category(
-            $data->ID,
-            $data->Name,
+            $data->id,
+            $data->name,
         );
     }
 }

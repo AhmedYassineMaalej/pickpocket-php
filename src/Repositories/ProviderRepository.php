@@ -17,8 +17,8 @@ class ProviderRepository extends Repository
     private static function convertToProvider(object $data): Provider
     {
         return new Provider(
-            $data->ID,
-            $data->Name,
+            $data->id,
+            $data->name,
         );
     }
 }

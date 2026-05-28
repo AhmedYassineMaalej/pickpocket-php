@@ -17,21 +17,21 @@ class ProductRepository extends Repository
     public static function convertToProduct(object $data): Product
     {
         return new Product(
-            $data->ID,
-            $data->Name,
-            $data->Reference,
-            $data->Image,
-            $data->category_id
+            $data->id,
+            $data->name,
+            $data->reference,
+            $data->image,
+            $data->category_id,
         );
     }
 
     private static function convertToProductInfo(object $data): ProductInfo
     {
         return new ProductInfo(
-            $data->ID,
+            $data->id,
             $data->product_id,
-            $data->Key,
-            $data->Value
+            $data->key,
+            $data->value,
         );
     }
 
@@ -80,11 +80,11 @@ class ProductRepository extends Repository
     {
         $conn = self::getConnection();
         $stmt = $conn->prepare("
-            SELECT p.*, COUNT(po.ID) as offer_count, MIN(po.Price) as min_price
-            FROM Product p
-            INNER JOIN Offer po ON p.ID = po.product_id
-            GROUP BY p.ID
-            ORDER BY offer_count DESC
+            SELECT p.*, COUNT(po.ID) as offer_count, MIN(po.price) as min_price
+            FROM product p
+            INNER JOIN offer po ON p.id = po.product_id
+            GROUP BY p.id
+            oRDER BY offer_count DESC
             LIMIT $limit
         ");
         $stmt->execute();
@@ -101,11 +101,11 @@ class ProductRepository extends Repository
     {
         $conn = self::getConnection();
         $stmt = $conn->prepare("
-            SELECT p.*, MIN(po.Price) as min_price, COUNT(po.ID) as offer_count
-            FROM Product p
-            INNER JOIN Offer po ON p.ID = po.product_id
-            GROUP BY p.ID
-            ORDER BY min_price ASC
+            SELECT p.*, MIN(po.price) as min_price, COUNT(po.id) as offer_count
+            FROM product p
+            INNER JOIN offer po ON p.id = po.product_id
+            GROUP BY p.id
+            oRDER BY min_price ASC
             LIMIT $limit
         ");
 
@@ -124,10 +124,10 @@ class ProductRepository extends Repository
     {
         $conn = self::getConnection();
         $stmt = $conn->prepare("
-            SELECT p.*, COUNT(pi.ID) as info_count
-            FROM Product p
-            INNER JOIN ProductInfo pi ON p.ID = pi.product_id
-            GROUP BY p.ID
+            SELECT p.*, COUNT(pi.id) as info_count
+            FROM product p
+            INNER JOIN product_info pi ON p.id = pi.product_id
+            GROUP BY p.id
             ORDER BY info_count DESC
             LIMIT $limit
         ");
@@ -167,11 +167,11 @@ class ProductRepository extends Repository
     {
         $conn = self::getConnection();
         $stmt = $conn->prepare("
-            SELECT p.*, MIN(po.Price) as min_price
-            FROM Product p
-            INNER JOIN Offer po ON p.ID = po.product_id
-            GROUP BY p.ID
-            ORDER BY RAND()
+            SELECT p.*, MIN(po.price) as min_price
+            FROM product p
+            INNER JOIN offer po ON p.id = po.product_id
+            GROUP BY p.id
+            oRDER BY RAND()
             LIMIT 1
         ");
         $stmt->execute();
@@ -194,7 +194,7 @@ class ProductRepository extends Repository
         $conn = self::getConnection();
         $stmt = $conn->prepare("
             SELECT MIN(Price) as min_price
-            FROM Offer
+            FROM offer
             WHERE product_id = ?
         ");
         $stmt->execute([$productId]);

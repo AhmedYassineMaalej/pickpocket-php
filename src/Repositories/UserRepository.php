@@ -4,11 +4,10 @@ namespace App\Repositories;
 
 use App\Entities\User;
 use Exception;
-use PDO;
 
 class UserRepository extends Repository
 {
-    protected static string $tableName = "users";
+    protected static string $tableName = "user";
 
     private static function convertToUser(object $data): ?User
     {
@@ -16,9 +15,9 @@ class UserRepository extends Repository
             return null;
         }
         return new User(
-            $data->ID,
+            $data->id,
             $data->username,
-            $data->Pwd,
+            $data->password,
             $data->role,
         );
     }
@@ -44,8 +43,8 @@ class UserRepository extends Repository
     {
         $result = self::insert([
             'username' => $username,
-            'Pwd' => $hashed_password,
-            'role' => 'user'
+            'password' => $hashed_password,
+            'role' => 'user',
         ]);
 
         if ($result) {
@@ -78,3 +77,4 @@ class UserRepository extends Repository
         }
     }
 }
+

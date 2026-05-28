@@ -14,20 +14,22 @@ class RecommendationRepository extends Repository
         try {
             // Get all existing bookmarked products (excluding the new one)
             $stmt = self::getConnection()->prepare("
-                SELECT productID FROM Bookmark WHERE UserID = ? AND productID != ?
+                SELECT product_id FROM bookmark WHERE user_id = ? AND product_id != ?
             ");
             $stmt->execute([$userId, $newProductId]);
             $existingProducts = $stmt->fetchAll(\PDO::FETCH_OBJ);
 
             // Get category of the new product
             $stmt = self::getConnection()->prepare("
-                SELECT category_id FROM Product WHERE ID = ?
+                SELECT category_id FROM product WHERE id = ?
             ");
             $stmt->execute([$newProductId]);
             $newProduct = $stmt->fetch(\PDO::FETCH_OBJ);
-            
-            if (!$newProduct) return;
-            
+
+            if (!$newProduct) {
+                return;
+            }
+
             $categoryId = $newProduct->category_id;
             $weightChange = $increment ? 1 : -1;
 
@@ -37,18 +39,18 @@ class RecommendationRepository extends Repository
 
                 // Check if same category
                 $stmt = self::getConnection()->prepare("
-                    SELECT category_id FROM Product WHERE ID = ?
+                    SELECT category_id FROM product WHERE id = ?
                 ");
                 $stmt->execute([$existingProductId]);
                 $existingProduct = $stmt->fetch(\PDO::FETCH_OBJ);
-                
-                if ($existingProduct->category_id != $categoryId) { 
+
+                if ($existingProduct->category_id != $categoryId) {
                     continue;
                 }
 
                 if ($increment) {
                     $stmt = self::getConnection()->prepare("
-                        INSERT INTO recommendation (category_id, product_id1, product_id2, weight)
+                        INSERT INTO recommendation (category_id, product1_id, product2_id, weight)
                         VALUES (?, LEAST(?, ?), GREATEST(?, ?), ?)
                         ON DUPLICATE KEY UPDATE weight = weight + ?
                     ");
@@ -57,8 +59,8 @@ class RecommendationRepository extends Repository
                     $stmt = self::getConnection()->prepare("
                         SELECT weight FROM recommendation 
                         WHERE category_id = ? 
-                        AND product_id1 = LEAST(?, ?) 
-                        AND product_id2 = GREATEST(?, ?)
+                        AND product1_id = LEAST(?, ?) 
+                        AND product2_id = GREATEST(?, ?)
                     ");
                     $stmt->execute([$categoryId, $newProductId, $existingProductId, $newProductId, $existingProductId]);
                     $existingRec = $stmt->fetch(\PDO::FETCH_OBJ);
@@ -70,16 +72,16 @@ class RecommendationRepository extends Repository
                             $stmt = self::getConnection()->prepare("
                                 DELETE FROM recommendation 
                                 WHERE category_id = ? 
-                                AND product_id1 = LEAST(?, ?) 
-                                AND product_id2 = GREATEST(?, ?)
+                                AND product1_id = LEAST(?, ?) 
+                                AND product2_id = GREATEST(?, ?)
                             ");
                             $stmt->execute([$categoryId, $newProductId, $existingProductId, $newProductId, $existingProductId]);
                         } else {
                             $stmt = self::getConnection()->prepare("
                                 UPDATE recommendation SET weight = ? 
                                 WHERE category_id = ? 
-                                AND product_id1 = LEAST(?, ?) 
-                                AND product_id2 = GREATEST(?, ?)
+                                AND product1_id = LEAST(?, ?) 
+                                AND product2_id = GREATEST(?, ?)
                             ");
                             $stmt->execute([$newWeight, $categoryId, $newProductId, $existingProductId, $newProductId, $existingProductId]);
                         }
@@ -96,7 +98,7 @@ class RecommendationRepository extends Repository
         try {
             // Get product's category
             $stmt = self::getConnection()->prepare("
-                SELECT category_id FROM Product WHERE ID = ?
+                SELECT category_id FROM product WHERE id = ?
             ");
             $stmt->execute([$productId]);
             $product = $stmt->fetch(\PDO::FETCH_OBJ);
@@ -111,13 +113,13 @@ class RecommendationRepository extends Repository
             $stmt = self::getConnection()->prepare("
                 SELECT 
                     CASE 
-                        WHEN product_id1 = ? THEN product_id2
-                        ELSE product_id1
+                        WHEN product1_id = ? THEN product2_id
+                        ELSE product1_id
                     END as recommended_product_id,
                     weight
                 FROM recommendation
                 WHERE category_id = ? 
-                AND (product_id1 = ? OR product_id2 = ?)
+                AND (product1_id = ? OR product2_id = ?)
                 ORDER BY weight DESC
                 LIMIT ?
             ");
@@ -140,80 +142,80 @@ class RecommendationRepository extends Repository
     }
 
     public static function getRecommendationsForUser(int $userId, int $limit = 6): array
-{
-    try {
-        
-        // Get products from user's bookmarks
-        $stmt = self::getConnection()->prepare("
-            SELECT DISTINCT productID
-            FROM Bookmark
-            WHERE UserID = ?
+    {
+        try {
+
+            // Get products from user's bookmarks
+            $stmt = self::getConnection()->prepare("
+            SELECT DISTINCT product_id
+            FROM bookmark
+            WHERE user_id = ?
         ");
-        $stmt->execute([$userId]);
-        $bookmarkedProducts = $stmt->fetchAll(\PDO::FETCH_OBJ);
-        
+            $stmt->execute([$userId]);
+            $bookmarkedProducts = $stmt->fetchAll(\PDO::FETCH_OBJ);
 
-        if (empty($bookmarkedProducts)) {
-            error_log("No bookmarks found, returning empty array");
-            return [];
-        }
 
-        $bookmarkedProductIds = array_column($bookmarkedProducts, 'productID');
-        
-        $inClause = implode(',', array_fill(0, count($bookmarkedProductIds), '?'));
-        
-        // Get recommended products based on weight
-        $sql = "
+            if (empty($bookmarkedProducts)) {
+                error_log("No bookmarks found, returning empty array");
+                return [];
+            }
+
+            $bookmarkedProductIds = array_column($bookmarkedProducts, 'product_id');
+
+            $inClause = implode(',', array_fill(0, count($bookmarkedProductIds), '?'));
+
+            // Get recommended products based on weight
+            $sql = "
             SELECT 
                 CASE 
-                    WHEN product_id1 IN ($inClause) THEN product_id2
-                    WHEN product_id2 IN ($inClause) THEN product_id1
+                    WHEN product1_id IN ($inClause) THEN product2_id
+                    WHEN product2_id IN ($inClause) THEN product1_id
                 END as recommended_product_id,
                 SUM(weight) as total_weight
             FROM recommendation
-            WHERE (product_id1 IN ($inClause) OR product_id2 IN ($inClause))
+            WHERE (product1_id IN ($inClause) OR product2_id IN ($inClause))
             GROUP BY recommended_product_id
             HAVING recommended_product_id IS NOT NULL
             ORDER BY total_weight DESC
             LIMIT $limit
         ";
-        
-        
-        $params = array_merge($bookmarkedProductIds, $bookmarkedProductIds, $bookmarkedProductIds, $bookmarkedProductIds);
-        
-        
-        $stmt = self::getConnection()->prepare($sql);
-        $stmt->execute($params);
-        $recommendations = $stmt->fetchAll(\PDO::FETCH_OBJ);
 
-        // Fetch full product objects
-        $products = [];
-        foreach ($recommendations as $rec) {
-            
-            // Skip if already bookmarked
-            if (in_array($rec->recommended_product_id, $bookmarkedProductIds)) {
-                error_log("Skipping product " . $rec->recommended_product_id . " - already bookmarked");
-                continue;
+
+            $params = array_merge($bookmarkedProductIds, $bookmarkedProductIds, $bookmarkedProductIds, $bookmarkedProductIds);
+
+
+            $stmt = self::getConnection()->prepare($sql);
+            $stmt->execute($params);
+            $recommendations = $stmt->fetchAll(\PDO::FETCH_OBJ);
+
+            // Fetch full product objects
+            $products = [];
+            foreach ($recommendations as $rec) {
+
+                // Skip if already bookmarked
+                if (in_array($rec->recommended_product_id, $bookmarkedProductIds)) {
+                    error_log("Skipping product " . $rec->recommended_product_id . " - already bookmarked");
+                    continue;
+                }
+
+                $productObj = ProductRepository::getProductById($rec->recommended_product_id);
+                if ($productObj) {
+                    error_log("Added product: " . $productObj->name);
+                    $products[] = $productObj;
+                } else {
+                    error_log("Product not found for ID: " . $rec->recommended_product_id);
+                }
             }
-            
-            $productObj = ProductRepository::getProductById($rec->recommended_product_id);
-            if ($productObj) {
-                error_log("Added product: " . $productObj->name);
-                $products[] = $productObj;
-            } else {
-                error_log("Product not found for ID: " . $rec->recommended_product_id);
-            }
+
+            return $products;
+
+        } catch (Exception $e) {
+            error_log("=== getRecommendationsForUser ERROR ===");
+            error_log("Error message: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
+            return [];
         }
-        
-        return $products;
-
-    } catch (Exception $e) {
-        error_log("=== getRecommendationsForUser ERROR ===");
-        error_log("Error message: " . $e->getMessage());
-        error_log("Stack trace: " . $e->getTraceAsString());
-        return [];
     }
-}
 
 
 
@@ -221,7 +223,7 @@ class RecommendationRepository extends Repository
     {
         try {
             $stmt = self::getConnection()->prepare("
-                SELECT product_id1, product_id2, weight
+                SELECT product1_id, product2_id, weight
                 FROM recommendation
                 WHERE category_id = ?
                 ORDER BY weight DESC
@@ -235,3 +237,4 @@ class RecommendationRepository extends Repository
         }
     }
 }
+

@@ -7,7 +7,7 @@ use Exception;
 
 class OfferRepository extends Repository
 {
-    protected static string $tableName = "Offer";
+    protected static string $tableName = "offer";
 
     public static function getProductOffers(int $productID): array
     {
@@ -22,11 +22,11 @@ class OfferRepository extends Repository
         }
 
         return new ProductOffer(
-            $data->ID,
+            $data->id,
             $data->product_id,
-            $data->Link,
-            $data->Price,
-            $data->provider_id
+            $data->link,
+            $data->price,
+            $data->provider_id,
         );
     }
 
@@ -78,29 +78,29 @@ class OfferRepository extends Repository
         // Base query with best price subquery
         $sql = "
             SELECT 
-                po.ID AS offer_id,
-                po.Price,
-                po.Link,
-                p.ID AS product_id,
-                p.Name AS product_name,
-                p.Reference AS product_reference,
-                p.Image,
+                po.id AS offer_id,
+                po.price,
+                po.link,
+                p.id AS product_id,
+                p.name AS product_name,
+                p.reference AS product_reference,
+                p.image,
                 p.category_id,
-                c.Name AS category_name,
-                pr.Name AS provider_name,
-                pi.ID AS info_id,
-                pi.`Key` AS info_key,
-                pi.Value AS info_value
-            FROM Product p
+                c.name AS category_name,
+                pr.name AS provider_name,
+                pi.id AS info_id,
+                pi.`key` AS info_key,
+                pi.value AS info_value
+            FROM product p
             JOIN offer po ON po.product_id = p.ID
             JOIN (
-                SELECT product_id, MIN(Price) AS min_price
+                SELECT product_id, MIN(price) AS min_price
                 FROM offer
                 GROUP BY product_id
-            ) best ON best.product_id = po.product_id AND best.min_price = po.Price
-            {$joins['category']} JOIN Category c ON p.category_id = c.ID
-            {$joins['provider']} JOIN Provider pr ON po.provider_id = pr.ID
-            LEFT JOIN product_info pi ON pi.product_id = p.ID
+            ) best ON best.product_id = po.product_id AND best.min_price = po.price
+            {$joins['category']} JOIN category c ON p.category_id = c.id
+            {$joins['provider']} JOIN provider pr ON po.provider_id = pr.id
+            lEFT JOIN product_info pi ON pi.product_id = p.id
         ";
 
         // Add WHERE clause
@@ -142,8 +142,8 @@ class OfferRepository extends Repository
             if (!isset($offers[$id])) {
                 $offers[$id] = [
                     'offer_id' => $row['offer_id'],
-                    'Price' => $row['Price'],
-                    'Link' => $row['Link'],
+                    'price' => $row['price'],
+                    'link' => $row['link'],
                     'product' => [
                         'id' => $row['product_id'],
                         'name' => $row['product_name'],
