@@ -22,10 +22,9 @@ class MySpaceController
         $userId = $payload['user_id'];
 
         $activeTab = $_GET['tab'] ?? 'dashboard';
-        error_log("Current tab: " . $activeTab);
         $recommendedProducts = RecommendationRepository::getRecommendationsForUser($userId, 6);
         $bookmarks = BookmarkRepository::getUserBookmarks($userId);
-  
+
 
         require __DIR__ . '/../../views/pages/myspace.php';
     }
@@ -82,4 +81,3 @@ class MySpaceController
         exit;
     }
 }
-
