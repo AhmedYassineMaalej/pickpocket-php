@@ -148,7 +148,7 @@ class OfferRepository extends Repository
                         'id' => $row['product_id'],
                         'name' => $row['product_name'],
                         'reference' => $row['product_reference'],
-                        'image' => $row['Image'],
+                        'image' => $row['image'],
                         'category_id' => $row['category_id'],
                         'category_name' => $row['category_name'],
                         'provider_name' => $row['provider_name'],

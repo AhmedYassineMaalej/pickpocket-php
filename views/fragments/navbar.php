@@ -39,20 +39,22 @@ function navbar()
             </ul>
             <?php search_bar() ?>
             <ul class="navbar-nav mb-2 mb-lg-0">
-                <?php
-                if (JWT::isLoggedIn()) {
-                    bookmarks_button();
-                    $categories = CategoryRepository::findAll();
-                    catalog_button($categories);
-                    myspace_button();
 
-                    if (!$isMySpace) {
-                        logout_button();
-                    }
-                } else {
-                    login_button();
-                    signup_button();
-                }
+                <?php
+
+                $categories = CategoryRepository::findAll();
+    if (JWT::isLoggedIn()) {
+        catalog_button($categories);
+        bookmarks_button();
+        myspace_button();
+
+        if (!$isMySpace) {
+            logout_button();
+        }
+    } else {
+        login_button();
+        signup_button();
+    }
     ?>
             </ul>
         </div>
