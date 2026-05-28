@@ -28,14 +28,14 @@ class RecommendationRepository extends Repository {
             
             // Get category of the new product
             $stmt = self::getConnection()->prepare("
-                SELECT CategoryID FROM Product WHERE ID = ?
+                SELECT category_id FROM Product WHERE ID = ?
             ");
             $stmt->execute([$newProductId]);
             $newProduct = $stmt->fetch(\PDO::FETCH_OBJ);
             
             if (!$newProduct) return;
             
-            $categoryId = $newProduct->CategoryID;
+            $categoryId = $newProduct->category_id;
             $weightChange = $increment ? 1 : -1;
             
             // Update weights for each existing bookmarked product in same category
@@ -44,12 +44,12 @@ class RecommendationRepository extends Repository {
                 
                 // Check if same category
                 $stmt = self::getConnection()->prepare("
-                    SELECT CategoryID FROM Product WHERE ID = ?
+                    SELECT category_id FROM Product WHERE ID = ?
                 ");
                 $stmt->execute([$existingProductId]);
                 $existingProduct = $stmt->fetch(\PDO::FETCH_OBJ);
                 
-                if ($existingProduct->CategoryID != $categoryId) { 
+                if ($existingProduct->category_id != $categoryId) { 
                     continue;
                 }
                 

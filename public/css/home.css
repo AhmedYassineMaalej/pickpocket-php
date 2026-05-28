@@ -295,3 +295,24 @@ h3 {
 hr {
     margin: 20px 0;
 }
+.product-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.btn-view-details {
+    flex: 1;
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-view-details:hover {
+    background: #0056b3;
+}
+
+

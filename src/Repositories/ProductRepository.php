@@ -19,14 +19,14 @@ class ProductRepository extends Repository {
             $data->Name,
             $data->Reference,
             $data->Image,
-            $data->CategoryID
+            $data->category_id
         );
     }
 
     private static function convertToProductInfo(object $data): ProductInfo {
         return new ProductInfo(
             $data->ID,
-            $data->ProductID,
+            $data->product_id,
             $data->Key,
             $data->Value
         );
@@ -58,7 +58,7 @@ class ProductRepository extends Repository {
      */
     public static function getProductInfo(int $productId) {
         $conn = self::getConnection();
-        $stmt = $conn->prepare("SELECT * FROM ProductInfo WHERE ProductID = ?");
+        $stmt = $conn->prepare("SELECT * FROM product_info WHERE product_id = ?");
         $stmt->execute([$productId]);
         $results = $stmt->fetchAll(PDO::FETCH_OBJ);
         return array_map(self::convertToProductInfo(...), $results);
@@ -72,7 +72,7 @@ class ProductRepository extends Repository {
         $stmt = $conn->prepare("
             SELECT p.*, COUNT(po.ID) as offer_count, MIN(po.Price) as min_price
             FROM Product p
-            INNER JOIN ProductOffer po ON p.ID = po.ProductID
+            INNER JOIN Offer po ON p.ID = po.product_id
             GROUP BY p.ID
             ORDER BY offer_count DESC
             LIMIT $limit
@@ -92,7 +92,7 @@ class ProductRepository extends Repository {
         $stmt = $conn->prepare("
             SELECT p.*, MIN(po.Price) as min_price, COUNT(po.ID) as offer_count
             FROM Product p
-            INNER JOIN ProductOffer po ON p.ID = po.ProductID
+            INNER JOIN Offer po ON p.ID = po.product_id
             GROUP BY p.ID
             ORDER BY min_price ASC
             LIMIT $limit
@@ -113,7 +113,7 @@ class ProductRepository extends Repository {
         $stmt = $conn->prepare("
             SELECT p.*, COUNT(pi.ID) as info_count
             FROM Product p
-            INNER JOIN ProductInfo pi ON p.ID = pi.ProductID
+            INNER JOIN ProductInfo pi ON p.ID = pi.product_id
             GROUP BY p.ID
             ORDER BY info_count DESC
             LIMIT $limit
@@ -154,7 +154,7 @@ class ProductRepository extends Repository {
         $stmt = $conn->prepare("
             SELECT p.*, MIN(po.Price) as min_price
             FROM Product p
-            INNER JOIN ProductOffer po ON p.ID = po.ProductID
+            INNER JOIN Offer po ON p.ID = po.product_id
             GROUP BY p.ID
             ORDER BY RAND()
             LIMIT 1
@@ -176,8 +176,8 @@ class ProductRepository extends Repository {
         $conn = self::getConnection();
         $stmt = $conn->prepare("
             SELECT MIN(Price) as min_price
-            FROM ProductOffer
-            WHERE ProductID = ?
+            FROM Offer
+            WHERE product_id = ?
         ");
         $stmt->execute([$productId]);
         $result = $stmt->fetch(PDO::FETCH_OBJ);

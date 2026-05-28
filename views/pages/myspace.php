@@ -129,7 +129,6 @@
                         <h3 class="section-title fw-bold text-white mb-4">🎯 Recommendations</h3><br>
                         
                         <div class="alert alert-info">
-                            <strong>DEBUG:</strong> Dashboard tab active | RecommendedProducts count: <?= isset($recommendedProducts) ? count($recommendedProducts) : 0 ?>
                             <?php if (!empty($recommendedProducts)): ?>
                                 <br>First product: <?= htmlspecialchars($recommendedProducts[0]->name) ?>
                             <?php endif; ?>
@@ -177,6 +176,6 @@
         </div>
     </div>
 </div>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

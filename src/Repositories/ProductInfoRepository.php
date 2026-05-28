@@ -5,14 +5,14 @@ use App\Entities\ProductInfo;
 
 
 class ProductInfoRepository extends Repository {
-    protected static string $tableName = "ProductInfo";
+    protected static string $tableName = "product_info";
 
     public static function getByProductID(int $productID): array {
-        $result = self::select(["ProductID" => $productID]);
+        $result = self::select(["product_id" => $productID]);
         return array_map(function ($row) {
             return new ProductInfo(
                 $row->ID,
-                $row->ProductID,
+                $row->product_id,
                 $row->Key,
                 $row->Value,
             );

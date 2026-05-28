@@ -38,7 +38,7 @@ class ProductOffer {
 
     public function getProductOffersByProductId(int $productId): array {
             $conn = self::getConnection();
-            $stmt = $conn->prepare("SELECT * FROM ProductOffer WHERE ProductID = ?");
+            $stmt = $conn->prepare("SELECT * FROM Offer WHERE product_id = ?");
             $stmt->execute([$productId]);
             $results = $stmt->fetchAll(PDO::FETCH_OBJ);
             return array_map(self::convertToProductOffer(...), $results);

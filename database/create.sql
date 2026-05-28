@@ -33,41 +33,41 @@ CREATE TABLE IF NOT EXISTS Product (
     Reference   VARCHAR(100) NOT NULL UNIQUE,
     Name        VARCHAR(100) NOT NULL,
     Image       VARCHAR(500),
-    CategoryID  INT,
+    category_id  INT,
     PRIMARY KEY (ID),
     CONSTRAINT fk_product_category
-        FOREIGN KEY (CategoryID) REFERENCES Category(ID)
+        FOREIGN KEY (category_id) REFERENCES Category(ID)
         ON DELETE SET NULL
         ON UPDATE CASCADE
 );
 
 
-CREATE TABLE IF NOT EXISTS ProductInfo (
+CREATE TABLE IF NOT EXISTS product_info (
     ID        INT          NOT NULL AUTO_INCREMENT,
-    ProductID INT          NOT NULL,
+    product_id INT          NOT NULL,
     `Key`     VARCHAR(100) NOT NULL,
     Value     TEXT,
     PRIMARY KEY (ID),
     CONSTRAINT fk_productinfo_product
-        FOREIGN KEY (ProductID) REFERENCES Product(ID)
+        FOREIGN KEY (product_id) REFERENCES Product(ID)
         ON DELETE CASCADE
         ON UPDATE CASCADE
 );
 
 
-CREATE TABLE IF NOT EXISTS ProductOffer (
+CREATE TABLE IF NOT EXISTS Offer (
     ID         INT            NOT NULL AUTO_INCREMENT,
-    ProductID  INT   NOT NULL,          
+    product_id  INT   NOT NULL,          
     Link       VARCHAR(500),
     Price      DECIMAL(10, 2) NOT NULL,
-    ProviderID INT            NOT NULL,
+    provider_id INT            NOT NULL,
     PRIMARY KEY (ID),
     CONSTRAINT fk_productoffer_product
-        FOREIGN KEY (ProductID) REFERENCES Product(ID)
+        FOREIGN KEY (product_id) REFERENCES Product(ID)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
     CONSTRAINT fk_productoffer_provider
-        FOREIGN KEY (ProviderID) REFERENCES Provider(ID)
+        FOREIGN KEY (provider_id) REFERENCES Provider(ID)
         ON DELETE CASCADE
         ON UPDATE CASCADE
 );

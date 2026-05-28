@@ -3,6 +3,8 @@
 namespace App\Repositories;
 
 use App\Entities\Bookmark;
+use App\Repositories\RecommendationRepository;
+
 use PDO;
 
 class BookmarkRepository extends Repository
@@ -18,15 +20,15 @@ class BookmarkRepository extends Repository
     SELECT 
         b.ID AS bookmark_id,
         b.UserID,
-        b.ProductID,
+        b.productID,
         p.Name AS product_name,
         p.Reference AS product_reference, 
         p.Image AS product_image,
-        p.CategoryID,                     
+        p.category_id,                     
         po.Price AS price
     FROM Bookmark b
-    JOIN Product p ON b.ProductID = p.ID
-    LEFT JOIN ProductOffer po ON po.ProductID = p.ID
+    JOIN Product p ON b.productID = p.ID
+    LEFT JOIN offer po ON po.product_id = p.ID
     WHERE b.UserID = :userID
     ";
 
@@ -37,28 +39,38 @@ class BookmarkRepository extends Repository
 
     return array_map(function ($row) {
         return new \App\Entities\Product(
-            $row->ProductID,
+            $row->productID,
             $row->product_name,
             $row->product_reference,
             $row->product_image,
-            (int)$row->CategoryID
+            (int)$row->category_id
         );
     }, $rows);
 }
-    public static function addUserBookmark(int $userID, int $productID): bool
+    public static function addUserBookmark(int $userID, int $productID): void
     {
-        return self::insert([
+        $result = self::insert([  // ← Use self::insert(), not BookmarkRepository::addUserBookmark()
             'UserID' => $userID,
-            'ProductID' => $productID,
+            'productID' => $productID,
         ]);
+        
+        if ($result) {
+            RecommendationRepository::updateWeightsOnBookmark($userID, $productID, true);
+            echo json_encode(['success' => true, 'bookmarked' => true]);
+        } else {
+            echo json_encode(['error' => 'Failed to add bookmark']);
+        }
     }
 
     public static function removeUserBookmark(int $userID, int $productID): void
     {
-        self::delete([
+        self::delete([  // ← Use self::delete(), not BookmarkRepository::removeUserBookmark()
             'UserID' => $userID,
-            'ProductID' => $productID,
+            'productID' => $productID,
         ]);
+        
+        RecommendationRepository::updateWeightsOnBookmark($userID, $productID, false);
+        echo json_encode(['success' => true, 'bookmarked' => false]);
     }
 
 
@@ -66,7 +78,7 @@ class BookmarkRepository extends Repository
     {
         $rows = self::select([
             'UserID' => $userID,
-            'ProductID' => $productID,
+            'productID' => $productID,
         ]);
 
         return count($rows) > 0;

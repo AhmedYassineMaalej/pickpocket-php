@@ -18,7 +18,7 @@ class DBConnection
     {
         self::$_host = $_ENV['HOST'];
         self::$_dbname = $_ENV['DB_NAME'];
-        self::$_user = $_ENV['USER'];
+        self::$_user = $_ENV['DB_USER'];
         self::$_pwd = $_ENV['DB_PASS'];
 
         self::$connection = new PDO(

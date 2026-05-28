@@ -7,26 +7,26 @@ use Exception;
 
 class ProductOfferRepository extends Repository 
 {
-    protected static string $tableName = "ProductOffer";
+    protected static string $tableName = "Offer";
 
     public static function getProductOffers(int $productID): array 
     {
-        $data = self::select(['ProductID' => $productID]);
+        $data = self::select(['Product_id' => $productID]);
         return array_map(self::convertToProductOffer(...), $data);
     }
 
     private static function convertToProductOffer(object $data): ProductOffer 
     {
         if (!$data) {
-            throw new Exception("unable to convert data into ProductOffer");
+            throw new Exception("unable to convert data into offer");
         }
 
         return new ProductOffer(
             $data->ID,
-            $data->ProductID,
+            $data->product_id,
             $data->Link,
             $data->Price,
-            $data->ProviderID
+            $data->provider_id
         );
     }
 
@@ -84,22 +84,22 @@ class ProductOfferRepository extends Repository
                 p.Name AS product_name,
                 p.Reference AS product_reference,
                 p.Image,
-                p.CategoryID,
+                p.category_id,
                 c.Name AS category_name,
                 pr.Name AS provider_name,
                 pi.ID AS info_id,
                 pi.`Key` AS info_key,
                 pi.Value AS info_value
             FROM Product p
-            JOIN ProductOffer po ON po.ProductID = p.ID
+            JOIN offer po ON po.product_id = p.ID
             JOIN (
-                SELECT ProductID, MIN(Price) AS min_price
-                FROM ProductOffer
-                GROUP BY ProductID
-            ) best ON best.ProductID = po.ProductID AND best.min_price = po.Price
-            {$joins['category']} JOIN Category c ON p.CategoryID = c.ID
-            {$joins['provider']} JOIN Provider pr ON po.ProviderID = pr.ID
-            LEFT JOIN ProductInfo pi ON pi.ProductID = p.ID
+                SELECT product_id, MIN(Price) AS min_price
+                FROM offer
+                GROUP BY product_id
+            ) best ON best.product_id = po.product_id AND best.min_price = po.Price
+            {$joins['category']} JOIN Category c ON p.category_id = c.ID
+            {$joins['provider']} JOIN Provider pr ON po.provider_id = pr.ID
+            LEFT JOIN product_info pi ON pi.product_id = p.ID
         ";
 
         // Add WHERE clause
@@ -148,7 +148,7 @@ class ProductOfferRepository extends Repository
                         'name' => $row['product_name'],
                         'reference' => $row['product_reference'],
                         'image' => $row['Image'],
-                        'category_id' => $row['CategoryID'],
+                        'category_id' => $row['category_id'],
                         'category_name' => $row['category_name'],
                         'provider_name' => $row['provider_name'],
                     ],
