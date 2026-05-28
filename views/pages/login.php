@@ -4,7 +4,7 @@
 
 <!DOCTYPE html>
 <html lang="en">
-    <?php head("Login", 'login.css'); ?>
+    <?php head("Login", ['login.css']); ?>
 <body>
 
 <?php navbar(); ?>
@@ -30,17 +30,20 @@
             <!-- Error Messages -->
             <?php if (isset($_GET['error'])): ?>
                 <div class="alert alert-danger alert-dismissible fade show">
-                    <?php 
+                    <?php
                         $error = $_GET['error'];
-                        $message = '';
-                        switch($error) {
-                            case 'invalid_credentials': $message = 'Wrong username or password. Please try again.'; break;
-                            case 'missing_fields': $message = 'Please fill in all fields.'; break;
-                            case 'invalid_csrf': $message = 'Invalid security token. Please try again.'; break;
-                            default: $message = 'Something went wrong. Please try again.';
-                        }
-                        echo htmlspecialchars($message);
-                    ?>
+                $message = '';
+                switch ($error) {
+                    case 'invalid_credentials': $message = 'Wrong username or password. Please try again.';
+                        break;
+                    case 'missing_fields': $message = 'Please fill in all fields.';
+                        break;
+                    case 'invalid_csrf': $message = 'Invalid security token. Please try again.';
+                        break;
+                    default: $message = 'Something went wrong. Please try again.';
+                }
+                echo htmlspecialchars($message);
+                ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             <?php endif; ?>

@@ -1,5 +1,5 @@
-<?php 
-require __DIR__ . "/../fragments/head.php"; 
+<?php
+require __DIR__ . "/../fragments/head.php";
 require __DIR__ . "/../fragments/navbar.php";
 
 require __DIR__ . "/../fragments/stickers.php";
@@ -9,7 +9,7 @@ require __DIR__ . "/../fragments/product_section.php";
 
 <!doctype html>
 <html lang="en">
-    <?php head("Pickpocket | Home", 'home.css') ?>
+    <?php head("Home", ['home.css']) ?>
 
 
     <body>

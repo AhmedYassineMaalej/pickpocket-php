@@ -7,7 +7,7 @@
 
 <!doctype html>
 <html lang="en">
-    <?php head("Pickpocket | Home", 'myspace.css') ?>
+    <?php head("Pickpocket | Home", ['myspace.css']) ?>
     <body class="bg-dark text-white">
 
         <?php navbar(); ?>
