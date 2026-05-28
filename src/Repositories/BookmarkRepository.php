@@ -18,18 +18,14 @@ class BookmarkRepository extends Repository
     {
         $sql = "
         SELECT 
-            b.id AS bookmark_id,
-            b.user_id,
             b.product_id,
             p.name AS product_name,
             p.reference AS product_reference, 
             p.image AS product_image,
-            p.category_id,                     
-            po.price AS price
-        FROM bookmark b
-        JOIN product p ON b.product_id = p.id
-        LEFT JOIN offer po ON po.product_id = p.ID
-        WHERE b.user_id = :userID
+            p.category_id
+        FROM bookmark b, product p
+        WHERE b.product_id = p.id
+        AND b.user_id = :userID
         ";
 
         $stmt = self::getConnection()->prepare($sql);

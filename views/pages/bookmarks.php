@@ -9,8 +9,7 @@ require __DIR__ . '/../fragments/product_section.php';
 
 <!doctype html>
 <html lang="en">
-    <?php head('Bookmarks'); ?>
-    <script src="js/bookmark_button.js"></script>
+    <?php head('Bookmarks', js: ['bookmark_button.js']); ?>
 <body>
 
 <?php navbar(); ?>
