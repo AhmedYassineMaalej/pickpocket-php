@@ -1,5 +1,4 @@
 <?php
-use App\Entities\Bookmark;
 use App\Helpers\JWT;
 use App\Repositories\BookmarkRepository;
 
@@ -10,7 +9,7 @@ require __DIR__ . '/../fragments/product_section.php';
 
 <!doctype html>
 <html lang="en">
-    <?php head('Pickpocket | Bookmarks', 'common.css'); ?>
+    <?php head('Bookmarks'); ?>
     <script src="js/bookmark_button.js"></script>
 <body>
 

@@ -6,10 +6,10 @@ require __DIR__ . "/../fragments/head.php"; ?>
 <?php require __DIR__ . "/../fragments/deal_of_the_day.php"; ?>
 <?php require_once __DIR__ . "/../fragments/product_section.php"; ?>
 <?php require __DIR__ . "/../fragments/stickers.php"; ?>
+
 <!doctype html>
 <html lang="en">
-    <?php head("Pickpocket | Home", 'home.css') ?>
-    <link rel="stylesheet" href="css/catalog.css">
+    <?php head("Home", css: ['home.css']) ?>
     <body>
 
         <?php stickers(); ?>

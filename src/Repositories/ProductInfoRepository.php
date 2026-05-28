@@ -1,20 +1,22 @@
 <?php
 
 namespace App\Repositories;
+
 use App\Entities\ProductInfo;
 
+class ProductInfoRepository extends Repository
+{
+    protected static string $tableName = "product_info";
 
-class ProductInfoRepository extends Repository {
-    protected static string $tableName = "ProductInfo";
-
-    public static function getByProductID(int $productID): array {
-        $result = self::select(["ProductID" => $productID]);
+    public static function getByProductID(int $productID): array
+    {
+        $result = self::select(["product_id" => $productID]);
         return array_map(function ($row) {
             return new ProductInfo(
-                $row->ID,
-                $row->ProductID,
-                $row->Key,
-                $row->Value,
+                $row->id,
+                $row->product_id,
+                $row->key,
+                $row->value,
             );
         }, $result);
     }

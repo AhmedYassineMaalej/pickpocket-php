@@ -1,4 +1,5 @@
-<?php function catalog_button($categories) { ?>
+<?php function catalog_button($categories)
+{ ?>
     <li class="nav-item dropdown">
 
         <a class="nav-link dropdown-toggle" href="/catalog" role="button" data-bs-toggle="dropdown">
@@ -18,8 +19,8 @@
             <?php foreach ($categories as $category) { ?>
                 <li>
                     <a class="dropdown-item"
-                       href="/catalog?filters[category]=<?= urlencode($category->Name) ?>">
-                        <?= htmlspecialchars($category->Name) ?>
+                       href="/catalog?filters[category]=<?= urlencode($category->name) ?>">
+                        <?= htmlspecialchars($category->name) ?>
                     </a>
                 </li>
             <?php } ?>

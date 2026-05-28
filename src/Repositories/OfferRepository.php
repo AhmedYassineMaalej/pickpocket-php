@@ -2,104 +2,106 @@
 
 namespace App\Repositories;
 
-use App\Entities\ProductOffer;
+use App\Entities\Offer;
 use Exception;
 
-class ProductOfferRepository extends Repository 
+class OfferRepository extends Repository
 {
-    protected static string $tableName = "ProductOffer";
+    protected static string $tableName = "offer";
 
-    public static function getProductOffers(int $productID): array 
+    public static function getProductOffers(int $productID): array
     {
-        $data = self::select(['ProductID' => $productID]);
+        $data = self::select(['product_id' => $productID]);
         return array_map(self::convertToProductOffer(...), $data);
     }
 
-    private static function convertToProductOffer(object $data): ProductOffer 
+    private static function convertToProductOffer(object $data): Offer
     {
         if (!$data) {
             throw new Exception("unable to convert data into ProductOffer");
         }
 
-        return new ProductOffer(
-            $data->ID,
-            $data->ProductID,
-            $data->Link,
-            $data->Price,
-            $data->ProviderID
+        return new Offer(
+            $data->id,
+            $data->product_id,
+            $data->link,
+            $data->price,
+            $data->provider_id,
         );
     }
 
-    public static function getProductOfferById(int $id): ?ProductOffer 
+    public static function getOfferById(int $id): ?Offer
     {
         $data = self::findById($id);
-        if (!$data) return null;
+        if (!$data) {
+            return null;
+        }
         return self::convertToProductOffer($data);
     }
 
-    public static function filterOffers(array $filters = []): array 
+    public static function filterOffers(array $filters = []): array
     {
         $conditions = [];
         $params = [];
         $joins = [
             'category' => 'LEFT',
-            'provider' => 'LEFT'
+            'provider' => 'LEFT',
         ];
 
         // Build conditions
         if (!empty($filters['category'])) {
-            $conditions[] = "c.Name = :category";
+            $conditions[] = "c.name = :category";
             $params[':category'] = $filters['category'];
             $joins['category'] = 'INNER';
         }
 
         if (!empty($filters['provider'])) {
-            $conditions[] = "pr.Name = :provider";
+            $conditions[] = "pr.name = :provider";
             $params[':provider'] = $filters['provider'];
             $joins['provider'] = 'INNER';
         }
 
         if (!empty($filters['min_price'])) {
-            $conditions[] = "po.Price >= :min_price";
+            $conditions[] = "po.price >= :min_price";
             $params[':min_price'] = $filters['min_price'];
         }
 
         if (!empty($filters['max_price'])) {
-            $conditions[] = "po.Price <= :max_price";
+            $conditions[] = "po.price <= :max_price";
             $params[':max_price'] = $filters['max_price'];
         }
 
         if (!empty($filters['search'])) {
-            $conditions[] = "(p.Name LIKE :search OR p.Reference LIKE :search)";
+            $conditions[] = "(p.name LIKE :search OR p.reference LIKE :search)";
             $params[':search'] = "%" . $filters['search'] . "%";
         }
 
         // Base query with best price subquery
         $sql = "
             SELECT 
-                po.ID AS offer_id,
-                po.Price,
-                po.Link,
-                p.ID AS product_id,
-                p.Name AS product_name,
-                p.Reference AS product_reference,
-                p.Image,
-                p.CategoryID,
-                c.Name AS category_name,
-                pr.Name AS provider_name,
-                pi.ID AS info_id,
-                pi.`Key` AS info_key,
-                pi.Value AS info_value
-            FROM Product p
-            JOIN ProductOffer po ON po.ProductID = p.ID
+                po.id AS offer_id,
+                po.price,
+                po.link,
+                p.id AS product_id,
+                p.name AS product_name,
+                p.reference AS product_reference,
+                p.image,
+                p.category_id,
+                c.name AS category_name,
+                pr.name AS provider_name,
+                pi.id AS info_id,
+                pi.`key` AS info_key,
+                pi.value AS info_value
+            FROM product p
+            JOIN offer po ON po.product_id = p.id
             JOIN (
-                SELECT ProductID, MIN(Price) AS min_price
-                FROM ProductOffer
-                GROUP BY ProductID
-            ) best ON best.ProductID = po.ProductID AND best.min_price = po.Price
-            {$joins['category']} JOIN Category c ON p.CategoryID = c.ID
-            {$joins['provider']} JOIN Provider pr ON po.ProviderID = pr.ID
-            LEFT JOIN ProductInfo pi ON pi.ProductID = p.ID
+                SELECT product_id, MIN(price) AS min_price
+                FROM product_offer
+                GROUP BY product_id
+            ) best ON best.product_id = po.product_id AND best.min_price = po.price
+            {$joins['category']} JOIN category c ON p.category = c.id
+            {$joins['provider']} JOIN provider pr ON po.provider_id = pr.id
+            LEFT JOIN product_info pi ON pi.product_id = p.id
         ";
 
         // Add WHERE clause
@@ -110,19 +112,19 @@ class ProductOfferRepository extends Repository
         // Add ORDER BY
         if (!empty($filters['sort_by']) && in_array($filters['sort_by'], ['price', 'name'])) {
             $direction = (!empty($filters['order']) && strtolower($filters['order']) === 'desc') ? 'DESC' : 'ASC';
-            $sortField = ($filters['sort_by'] === 'price') ? 'po.Price' : 'p.Name';
+            $sortField = ($filters['sort_by'] === 'price') ? 'po.price' : 'p.Name';
             $sql .= " ORDER BY $sortField $direction";
         }
 
         // Add LIMIT/OFFSET
         if (!empty($filters['limit'])) {
             $sql .= " LIMIT :limit";
-            $params[':limit'] = (int)$filters['limit'];
+            $params[':limit'] = (int) $filters['limit'];
         }
-        
+
         if (!empty($filters['offset'])) {
             $sql .= " OFFSET :offset";
-            $params[':offset'] = (int)$filters['offset'];
+            $params[':offset'] = (int) $filters['offset'];
         }
 
         // Execute query
@@ -137,22 +139,22 @@ class ProductOfferRepository extends Repository
         $offers = [];
         foreach ($rows as $row) {
             $id = $row['offer_id'];
-            
+
             if (!isset($offers[$id])) {
                 $offers[$id] = [
                     'offer_id' => $row['offer_id'],
-                    'Price' => $row['Price'],
-                    'Link' => $row['Link'],
+                    'Price' => $row['price'],
+                    'Link' => $row['link'],
                     'product' => [
                         'id' => $row['product_id'],
                         'name' => $row['product_name'],
                         'reference' => $row['product_reference'],
-                        'image' => $row['Image'],
-                        'category_id' => $row['CategoryID'],
+                        'image' => $row['image'],
+                        'category_id' => $row['category_id'],
                         'category_name' => $row['category_name'],
                         'provider_name' => $row['provider_name'],
                     ],
-                    'info' => []
+                    'info' => [],
                 ];
             }
 
